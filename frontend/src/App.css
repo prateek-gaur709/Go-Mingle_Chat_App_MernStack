@@ -1,0 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Labrada:wght@100&family=Paprika&family=Shantell+Sans:ital@1&display=swap');
+
+.App {
+  min-height: 100vh;
+  display: flex;
+  background-image: url('./images/bg1.jpg');
+  text-align: center;
+  background-position: center;
+  background-size: cover;
+}
