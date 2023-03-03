@@ -16,7 +16,6 @@ const Signup = () => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [confirmPass, setConfirmPass] = useState();
-  const [gender, setGender] = useState();
   const [pic, setPic] = useState();
 
   const [show, setShow] = useState(false);
@@ -74,20 +73,8 @@ const Signup = () => {
           </InputRightElement>
         </InputGroup>
       </FormControl>
-      <FormControl as='gender'>
-        <FormLabel as='legend'>Gender</FormLabel>
-        <RadioGroup
-          defaultValue='male'
-          onChange={(e) => setGender(e.target.value)}
-        >
-          <HStack spacing='24px'>
-            <Radio value='male'>Male</Radio>
-            <Radio value='female'>Female</Radio>
-            <Radio value='others'>Others</Radio>
-          </HStack>
-        </RadioGroup>
-      </FormControl>
-      <FormControl id='pic' isRequired>
+
+      <FormControl id='pic'>
         <FormLabel>Upload your picture</FormLabel>
         <Input
           type='file'
