@@ -61,4 +61,37 @@ const authUser = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { registerUser, authUser };
+//search user api
+// /api/user/
+
+//we can send the data to backend by-
+// 1. using req.body via post request
+//2. using queries.(does not rquires post request)
+//  ex. /api/user?variable=value
+// Here...   /api/user?search=prateek
+
+//B - to take a param from api url
+//  /api/chat/:id ==> req.param.id  (req.param.name_of_that_param)
+//  /api/user?search=prateek    ==> req.query.search  (req.query.name_of_that_query)
+
+//operators in mongoose- see docs for $or, $and, $nor, $in, $ne
+const allUsers = asyncHandler(async (req, res) => {
+  const keyword = req.query.search
+    ? {
+        $or: [
+          {
+            name: { $regex: req.query.search, $options: 'i' },
+            email: { $regex: req.query.search, $options: 'i' },
+          },
+        ],
+      }
+    : {};
+  // console.log(keyword);
+
+  //auth middleware for granting the access to current logged in user id
+
+  const users = await User.find(keyword).find({ _id: { $ne: req.user._id } }); //except the current logged in user
+  res.send(users);
+});
+
+module.exports = { registerUser, authUser, allUsers };

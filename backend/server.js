@@ -5,6 +5,7 @@ var cors = require('cors'); //for proxy config
 const connectDB = require('./config/db');
 const colors = require('colors');
 const userRoutes = require('./routes/userRoutes');
+const chatRoutes = require('./routes/chatRoutes');
 const { notFound, errorHandler } = require('./middlewares/errorMiddleware');
 
 const app = express();
@@ -26,6 +27,8 @@ app.get('/', (req, res) => {
 //get post methods in userroute folder, then use-- app.use()
 app.use('/api/user', userRoutes);
 
+app.use('/api/chat', chatRoutes);
+
 //error handling routes: middlewares for unknown routes to display proper messages.
 
 app.use(notFound);
@@ -36,7 +39,7 @@ app.use(errorHandler);
 // });
 
 // app.get('/api/chat/:id', (req, res) => {
-//   // console.log(req.params.id);
+// console.log(req.params.id);
 //   res.send(chats.find((ele) => ele._id === req.params.id));
 // });
 
