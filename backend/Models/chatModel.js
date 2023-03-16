@@ -7,7 +7,7 @@
 const mongoose = require('mongoose');
 
 const chatSchema = {
-  chatName: { type: String, trim: true },
+  chatName: { type: String, trim: true, required: true },
   isGroupChat: { type: Boolean, default: false },
   users: [
     {
