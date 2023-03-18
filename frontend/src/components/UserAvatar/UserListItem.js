@@ -6,7 +6,7 @@ const UserListItem = (props) => {
   return (
     <div>
       <Box
-        onClick={props.chatHandler}
+        onClick={props.handleFunction}
         cursor='pointer'
         bg='#E8E8E8'
         _hover={{

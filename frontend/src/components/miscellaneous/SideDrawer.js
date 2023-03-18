@@ -167,7 +167,7 @@ const SideDrawer = () => {
                 <UserListItem
                   key={user._id}
                   user={user}
-                  chatHandler={() => accessChat(user._id)}
+                  handleFunction={() => accessChat(user._id)}
                 />
               ))
             )}
@@ -214,9 +214,10 @@ const SideDrawer = () => {
               size='sm'
             />
           </MenuButton>
+
           <MenuList>
             <ProfileModal user={user}>
-              {/* <MenuItem>My Profile</MenuItem> */}
+              <MenuItem>My Profile</MenuItem>
             </ProfileModal>
 
             <MenuDivider />

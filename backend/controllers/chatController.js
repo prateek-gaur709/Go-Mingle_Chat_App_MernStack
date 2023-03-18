@@ -85,7 +85,8 @@ const fetchChats = asyncHandler(async (req, res) => {
 });
 
 const createGroupChat = asyncHandler(async (req, res) => {
-  if (!req.body.users || req.body.name) {
+  console.log(req.body);
+  if (!req.body.users || !req.body.chatName) {
     return res.status(400).send({ message: 'Pls fill all the fields! ' });
   }
 
@@ -101,7 +102,7 @@ const createGroupChat = asyncHandler(async (req, res) => {
   //users array has been created.Now creating a new request or query to the database.
   try {
     const groupChat = await Chat.create({
-      chatName: req.body.name,
+      chatName: req.body.chatName,
       isGroupChat: true,
       users: users,
       groupAdmin: req.user,
@@ -115,7 +116,7 @@ const createGroupChat = asyncHandler(async (req, res) => {
     res.status(200).json(fullGroupChat);
   } catch (error) {
     res.status(400);
-    throw new error(error.message);
+    throw new Error(error.message);
   }
 });
 
