@@ -116,7 +116,7 @@ const GroupChatModal = ({ children }) => {
         title: 'New Group Chat Created!!',
         status: 'success',
         duration: 5000,
-        position: 'bottom-left',
+        position: 'bottom-center',
         isClosable: true,
       });
     } catch (error) {
@@ -125,7 +125,7 @@ const GroupChatModal = ({ children }) => {
         status: 'error',
         description: 'Failed to create Group Chat !! ',
         duration: 5000,
-        position: 'bottom-left',
+        position: 'bottom-center',
         isClosable: true,
       });
       return;
@@ -189,9 +189,9 @@ const GroupChatModal = ({ children }) => {
             ) : (
               searchResult
                 ?.slice(0, 4)
-                .map((e) => (
+                .map((e, i) => (
                   <UserListItem
-                    key={e._id}
+                    key={i}
                     user={e}
                     handleFunction={() => addToSelectedUsers(e)}
                   />

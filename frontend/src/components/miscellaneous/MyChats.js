@@ -7,12 +7,14 @@ import { ChatState } from '../../Context/ChatProvider';
 import ChatLoading from './ChatLoading';
 import GroupChatModal from './GroupChatModal';
 
-const MyChats = () => {
+const MyChats = ({ fetchAgain }) => {
   const [loggedUser, setLoggedUser] = useState();
   const { user, selectedChat, setSelectedChat, chats, setChats } = ChatState();
   const toast = useToast();
 
-  //when we come to this page, we are supposed to fetch all of the chats of the user.(/api/chat) -get req in backend
+  console.log(selectedChat);
+  //when we come to this page, we are supposed to fetch all of the chats
+  //of the user.(/api/chat) - get req in backend
   //lets make an api call to fetch all the chats
   const fetchChats = async () => {
     try {
@@ -24,7 +26,7 @@ const MyChats = () => {
 
       const { data } = await axios.get('/api/chat', config);
       setChats(data);
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       toast({
         title: 'Error Occurred in creating the chats!!',
@@ -41,7 +43,7 @@ const MyChats = () => {
   useEffect(() => {
     setLoggedUser(JSON.parse(localStorage.getItem('userInfo')));
     fetchChats();
-  }, []);
+  }, [fetchAgain]);
 
   return (
     <Box
@@ -83,10 +85,10 @@ const MyChats = () => {
         {/* //chats array se individual chat map krna h box me */}
         {chats ? (
           <Stack overflowY='scroll'>
-            {chats.map((chat) => (
+            {chats.map((chat, idx) => (
               <Box
-                key={chat._id}
-                onClick={setSelectedChat(chat)}
+                key={idx}
+                onClick={() => setSelectedChat(chat)}
                 bg={selectedChat === chat ? '#38B2AC' : '#E8E8E8'}
                 color={selectedChat === chat ? 'white' : 'black'}
                 cursor='pointer'
@@ -94,6 +96,7 @@ const MyChats = () => {
                 py={2}
                 borderRadius='lg'
               >
+                {console.log(selectedChat)}
                 <Text>
                   {!chat.isGroupChat
                     ? getSender(loggedUser, chat.users)
@@ -103,7 +106,10 @@ const MyChats = () => {
             ))}
           </Stack>
         ) : (
-          <ChatLoading />
+          <>
+            <ChatLoading />
+            {/* <Text> No results found! </Text> */}
+          </>
         )}
       </Box>
     </Box>
