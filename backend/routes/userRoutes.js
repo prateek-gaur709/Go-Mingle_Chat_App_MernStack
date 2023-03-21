@@ -9,6 +9,7 @@ const { protect } = require('../middlewares/authMiddleware');
 const router = express.Router();
 
 //.route is used to chain get,post methods
+//protect is used so that only logged in user can do thjese things
 
 //endpoint for registration ('/')
 router.route('/').post(registerUser).get(protect, allUsers);
