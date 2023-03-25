@@ -30,7 +30,7 @@ import {
 } from '@chakra-ui/react';
 
 import axios from 'axios';
-import ChatLoading from './ChatLoading';
+import ChatLoading from '../ChatLoading';
 import UserListItem from '../UserAvatar/UserListItem';
 
 const SideDrawer = () => {
@@ -51,7 +51,7 @@ const SideDrawer = () => {
   };
 
   const handleSearch = async () => {
-    console.log(search);
+    // console.log(search);
     if (!search) {
       toast({
         title: 'Pls enter something to search..',
@@ -75,7 +75,7 @@ const SideDrawer = () => {
       setLoading(false);
       setSearchResult(data);
 
-      console.log(searchResult);
+      // console.log(searchResult);
     } catch (error) {
       toast({
         title: 'Some Error Occurred!!',

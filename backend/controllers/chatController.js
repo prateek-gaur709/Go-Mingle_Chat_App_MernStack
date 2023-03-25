@@ -9,7 +9,7 @@ const accessChat = asyncHandler(async (req, res) => {
   // with which we are going to create the chat
 
   const { userId } = req.body;
-  console.log(userId);
+  // console.log(userId);
 
   if (!userId) {
     console.log('UserId param not sent with request ');
@@ -138,7 +138,7 @@ const renameGroup = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error('Chat not found!! ');
   } else {
-    console.log(chatName);
+    // console.log(chatName);
     res.json(updatedChat);
   }
 });

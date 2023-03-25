@@ -5,6 +5,7 @@ const User = require('../models/userModel');
 
 const sendMessage = asyncHandler(async (req, res) => {
   const { content, chatId } = req.body;
+  // console.log(req.body);
 
   if (!content || !chatId) {
     console.log('Invalid data passes into request!');

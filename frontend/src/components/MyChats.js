@@ -2,17 +2,17 @@ import { AddIcon } from '@chakra-ui/icons';
 import { Box, Button, Stack, Text, useToast } from '@chakra-ui/react';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { getSender } from '../../config/ChatLogics';
-import { ChatState } from '../../Context/ChatProvider';
+import { getSender } from '../config/ChatLogics';
+import { ChatState } from '../Context/ChatProvider';
 import ChatLoading from './ChatLoading';
-import GroupChatModal from './GroupChatModal';
+import GroupChatModal from './miscellaneous/GroupChatModal';
 
 const MyChats = ({ fetchAgain }) => {
   const [loggedUser, setLoggedUser] = useState();
   const { user, selectedChat, setSelectedChat, chats, setChats } = ChatState();
   const toast = useToast();
 
-  console.log(selectedChat);
+  // console.log(selectedChat);
   //when we come to this page, we are supposed to fetch all of the chats
   //of the user.(/api/chat) - get req in backend
   //lets make an api call to fetch all the chats
@@ -96,7 +96,7 @@ const MyChats = ({ fetchAgain }) => {
                 py={2}
                 borderRadius='lg'
               >
-                {console.log(selectedChat)}
+                {/* {console.log(selectedChat)} */}
                 <Text>
                   {!chat.isGroupChat
                     ? getSender(loggedUser, chat.users)
