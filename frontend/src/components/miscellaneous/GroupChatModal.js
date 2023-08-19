@@ -32,11 +32,11 @@ const GroupChatModal = ({ children }) => {
   const toast = useToast();
   const { user, chats, setChats } = ChatState();
 
-  const handleSearch = async (value) => {
-    setSearch(value);
+  const handleSearch = async (query) => {
+    setSearch(query);
     // console.log(value);
 
-    if (!value) return;
+    if (!query) return;
 
     try {
       setLoading(true);
@@ -47,9 +47,8 @@ const GroupChatModal = ({ children }) => {
       };
 
       const { data } = await axios.get(`/api/user?search=${search}`, config);
-      // console.log(data);
-      setSearchResult(data);
       setLoading(false);
+      setSearchResult(data);
     } catch (error) {
       toast({
         title: 'Search Error Occurred!!',
@@ -85,9 +84,9 @@ const GroupChatModal = ({ children }) => {
     if (!groupChatName || !selectedUsers) {
       toast({
         title: 'Pls enter all the fields !',
-        status: 'error',
+        status: 'warning',
         duration: 5000,
-        position: 'bottom-left',
+        position: 'bottom',
         isClosable: true,
       });
       return;
@@ -134,16 +133,9 @@ const GroupChatModal = ({ children }) => {
 
   return (
     <>
-      <Button
-        display='flex'
-        fontSize={{ base: '17px', md: '10px', lg: '17px' }}
-        rightIcon={<AddIcon />}
-        onClick={onOpen}
-      >
-        New Group Chat
-      </Button>
+      <span onClick={onOpen}>{children}</span>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} isCentered onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader
@@ -155,7 +147,7 @@ const GroupChatModal = ({ children }) => {
             Create Group Chat{' '}
           </ModalHeader>
           <ModalCloseButton />
-          <ModalBody pb={6}>
+          <ModalBody display='flex' flexDir='column' alignItems='center'>
             <FormControl>
               <Input
                 placeholder='Chat Name'

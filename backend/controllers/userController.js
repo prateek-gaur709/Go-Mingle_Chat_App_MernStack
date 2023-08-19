@@ -3,6 +3,10 @@ const { generateToken } = require('../config/generateToken');
 //express-async-handler package handles the errors in this controller
 const User = require('../models/userModel');
 
+//@description     Get or Search all users
+//@route           GET /api/user?search=
+//@access          Public
+
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, pic } = req.body;
 

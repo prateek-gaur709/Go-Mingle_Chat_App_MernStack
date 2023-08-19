@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChatState } from '../Context/ChatProvider';
 import {
   Box,
@@ -16,51 +16,69 @@ import UpdateGroupChatModal from './miscellaneous/UpdateGroupChatModal';
 import axios from 'axios';
 import './styles.css';
 import ScrollableChat from './ScrollableChat';
+import io from 'socket.io-client';
+import Lottie from 'react-lottie';
+import animationData from '../animations/typing.json';
+
+const ENDPOINT = 'http://localhost:5000/';
+var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
-  let [messages, setMessages] = useState([]);
-  let [loading, setLoading] = useState(false);
-  let [newMessage, setNewMessage] = useState();
-
-  const { user, selectedChat, setSelectedChat } = ChatState();
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [newMessage, setNewMessage] = useState('');
+  const [socketConnected, setSocketConnected] = useState(false);
+  const [typing, setTyping] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const toast = useToast();
+
+  const { user, selectedChat, setSelectedChat, notification, setNotification } =
+    ChatState();
+
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice',
+    },
+  };
 
   const fetchMessages = async () => {
     if (!selectedChat) return;
 
     try {
-      setLoading(true);
       const config = {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
       };
 
+      setLoading(true);
       const { data } = await axios.get(
         `/api/message/${selectedChat._id}`,
         config
       );
 
-      setMessages([...messages, data]);
+      setMessages(data);
       setLoading(false);
+
+      socket.emit('join chat', selectedChat._id);
     } catch (error) {
       toast({
-        title: 'Failed to fetch the messages!',
+        title: 'Error Occured!',
+        description: 'Failed to Load the Messages',
         duration: 5000,
         status: 'error',
         isClosable: true,
-        position: 'bottom-left',
+        position: 'bottom',
       });
     }
   };
 
-  //if u want to use the updated state
-  useEffect(() => {
-    fetchMessages();
-  }, [selectedChat]);
-
   const sendMessage = async (event) => {
     if (event.key === 'Enter' && newMessage) {
+      socket.emit('stop typing', selectedChat._id);
       try {
         const config = {
           headers: {
@@ -73,32 +91,88 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           '/api/message',
           {
             content: newMessage,
-            chatId: selectedChat._id,
+            chatId: selectedChat,
           },
           config
         );
 
-        // console.log(data);
-
+        socket.emit('new message', data);
         setMessages([...messages, data]);
       } catch (error) {
         toast({
-          title: 'Failed to send the message!',
+          title: 'Error Occured!',
+          description: 'Failed to send the Messages',
           duration: 5000,
           status: 'error',
           isClosable: true,
-          position: 'bottom-left',
+          position: 'bottom',
         });
-        // window.alert('Failed to send the message!');
-        console.log(error.message);
       }
     }
   };
+
+  useEffect(() => {
+    socket = io(ENDPOINT);
+    socket.emit('setup', user); //emit==send
+    socket.on('connected', () => setSocketConnected(true)); //on == create event, and listen
+    socket.on('typing', () => setIsTyping(true));
+    socket.on('stop typing', () => setIsTyping(false));
+
+    // eslint-disable-next-line
+  }, []);
+
+  //if u want to use the updated state
+  useEffect(() => {
+    fetchMessages();
+
+    selectedChatCompare = selectedChat;
+
+    //we have to either emit the message or show notification to the user,
+    // based on selectedChatCompare state
+
+    // eslint-disable-next-line
+  }, [selectedChat]);
+
+  console.log(notification, '------------------');
+
+  useEffect(() => {
+    socket.on('message received', (newMessageReceived) => {
+      if (
+        !selectedChatCompare || // if chat is not selected or doesn't match current chat
+        selectedChatCompare._id !== newMessageReceived.chat._id
+      ) {
+        if (!notification.includes(newMessageReceived)) {
+          setNotification([newMessageReceived, ...notification]);
+          setFetchAgain(!fetchAgain);
+        }
+      } else {
+        setMessages([...messages, newMessageReceived]);
+      }
+    });
+  });
 
   const typingHandler = (e) => {
     setNewMessage(e.target.value);
 
     //typing indicator logic
+    if (!socketConnected) return;
+
+    if (!typing) {
+      setTyping(true);
+      socket.emit('typing', selectedChat._id);
+    }
+
+    //after 3 s, stop typing..if the user is not typing anymore
+    let lastTypingTime = new Date().getTime();
+    var timerLength = 3000;
+    setTimeout(() => {
+      var timeNow = new Date().getTime();
+      var timeDiff = timeNow - lastTypingTime;
+      if (timeDiff >= timerLength && typing) {
+        socket.emit('stop typing', selectedChat._id);
+        setTyping(false);
+      }
+    }, timerLength);
   };
 
   return (
@@ -121,12 +195,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               onClick={() => setSelectedChat('')}
             />
 
-            {!selectedChat.isGroupChat ? (
+            {messages && !selectedChat.isGroupChat ? (
               <>
                 {getSender(user, selectedChat.users)}
-                <ProfileModal user={getSenderFull(user, selectedChat.users)}>
-                  <ViewIcon />
-                </ProfileModal>
+                <ProfileModal user={getSenderFull(user, selectedChat.users)} />
               </>
             ) : (
               <>
@@ -152,30 +224,43 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             overflowY='hidden'
           >
             {/* message here    */}
-            {messages.length === 0 ? (
-              <>
-                {console.log(`4 : `, messages.length)}
-                <Spinner
-                  size='lg'
-                  color='teal'
-                  thickness='4px'
-                  speed='0.45s'
-                  w={20}
-                  h={20}
-                  alignSelf='center'
-                  margin='auto'
-                />
-              </>
+            {loading ? (
+              <Spinner
+                size='lg'
+                color='teal'
+                thickness='4px'
+                speed='0.45s'
+                w={20}
+                h={20}
+                alignSelf='center'
+                margin='auto'
+              />
             ) : (
               <div className='messages'>
                 <ScrollableChat messages={messages} />
               </div>
             )}
 
-            <FormControl onKeyDown={sendMessage} isRequired mt={3}>
+            <FormControl
+              onKeyDown={sendMessage}
+              id='first-name'
+              isRequired
+              mt={3}
+            >
+              {isTyping ? (
+                <div>
+                  <Lottie
+                    options={defaultOptions}
+                    width={70}
+                    style={{ marginBottom: 15, marginLeft: 0 }}
+                  />
+                </div>
+              ) : (
+                <></>
+              )}
               <Input
                 variant='filled'
-                bg='green.300'
+                bg='#E0E0E0'
                 placeholder='Enter a message...'
                 onChange={typingHandler}
                 value={newMessage}
@@ -184,9 +269,22 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           </Box>
         </>
       ) : (
-        <Text justifyContent='center' mt={250} fontSize='2xl'>
-          Click on Chat to view the conversation!
-        </Text>
+        <Box
+          display='flex'
+          alignItems='center'
+          justifyContent='center'
+          h='100%'
+        >
+          <Text
+            justifyContent='center'
+            mt={250}
+            fontSize='3xl'
+            pb={3}
+            fontFamily='Work sans'
+          >
+            Click on Chat to view the conversation!
+          </Text>
+        </Box>
       )}
     </>
   );

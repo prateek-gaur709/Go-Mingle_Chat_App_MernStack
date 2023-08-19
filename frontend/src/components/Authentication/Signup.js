@@ -1,20 +1,10 @@
-import React from 'react';
-import 'cors';
 import axios from 'axios';
 
-import {
-  VStack,
-  HStack,
-  Radio,
-  RadioGroup,
-  Button,
-  InputRightElement,
-  useToast,
-} from '@chakra-ui/react';
+import { VStack, Button, InputRightElement, useToast } from '@chakra-ui/react';
 
 import { FormControl, FormLabel, Input, InputGroup } from '@chakra-ui/react';
 import { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 const Signup = () => {
   //some hooks or states
@@ -25,7 +15,7 @@ const Signup = () => {
   const [pic, setPic] = useState();
   const [loading, setLoading] = useState(false);
   const toast = useToast();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
@@ -134,7 +124,7 @@ const Signup = () => {
 
       localStorage.setItem('userInfo', JSON.stringify(data));
       setLoading(false);
-      history.push('/chats');
+      navigate('/chats');
     } catch (error) {
       toast({
         title: 'Error Occurred!!',

@@ -10,17 +10,19 @@ import {
   VStack,
 } from '@chakra-ui/react';
 
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { ChatState } from '../../Context/ChatProvider';
 
 const Login = () => {
   const [show, setShow] = useState(false);
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
 
-  const history = useHistory();
+  const navigate = useNavigate();
+  const { setUser } = ChatState();
   const toast = useToast();
 
   const handleClick = () => setShow(!show);
@@ -36,7 +38,7 @@ const Login = () => {
         isClosable: true,
         position: 'bottom',
       });
-
+      setLoading(false);
       return;
     }
 
@@ -61,10 +63,10 @@ const Login = () => {
         isClosable: true,
         position: 'bottom',
       });
-
+      setUser(data);
       localStorage.setItem('userInfo', JSON.stringify(data));
       setLoading(false);
-      history.push('/chats');
+      navigate('/chats');
     } catch (error) {
       toast({
         title: 'Error Occurred!!',

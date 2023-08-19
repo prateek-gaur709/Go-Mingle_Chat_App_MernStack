@@ -4,6 +4,10 @@ const User = require('../models/userModel');
 
 //responsible for creating and fetching chat one on one
 
+//@description     Create or fetch One to One Chat
+//@route           POST /api/chat/
+//@access          Protected
+
 const accessChat = asyncHandler(async (req, res) => {
   //take the user id,
   // with which we are going to create the chat
@@ -23,9 +27,7 @@ const accessChat = asyncHandler(async (req, res) => {
     //   { users: { $eleMatch: { $eq: userId } } },
     // ],
     users: { $all: [req.user._id, userId] },
-  })
-    .populate('users', '-password')
-    .populate('latestMessage');
+  }).populate([{ path: 'users', select: '-password' }, 'latestMessage']);
 
   isChat = await User.populate(isChat, {
     path: 'latestMessage.sender',
@@ -109,9 +111,10 @@ const createGroupChat = asyncHandler(async (req, res) => {
     });
 
     //created group chat, fetch chat to user
-    const fullGroupChat = await Chat.findOne({ _id: groupChat._id })
-      .populate('users', '-password')
-      .populate('groupAdmin', '-password');
+    const fullGroupChat = await Chat.findOne({ _id: groupChat._id }).populate([
+      { path: 'users', select: '-password' },
+      { path: 'groupAdmin', select: '-password' },
+    ]);
 
     res.status(200).json(fullGroupChat);
   } catch (error) {
@@ -130,9 +133,10 @@ const renameGroup = asyncHandler(async (req, res) => {
     {
       new: true,
     }
-  )
-    .populate('users', '-password')
-    .populate('groupAdmin', '-password');
+  ).populate([
+    { path: 'users', select: '-password' },
+    { path: 'groupAdmin', select: '-password' },
+  ]);
 
   if (!updatedChat) {
     res.status(404);
@@ -152,9 +156,10 @@ const addToGroup = asyncHandler(async (req, res) => {
       $push: { users: userId },
     },
     { new: true }
-  )
-    .populate('users', '-password')
-    .populate('groupAdmin', '-password');
+  ).populate([
+    { path: 'users', select: '-password' },
+    { path: 'groupAdmin', select: '-password' },
+  ]);
 
   if (added) {
     res.json(added);
@@ -173,9 +178,10 @@ const removeFromGroup = asyncHandler(async (req, res) => {
       $pull: { users: userId },
     },
     { new: true }
-  )
-    .populate('users', '-password')
-    .populate('groupAdmin', '-password');
+  ).populate([
+    { path: 'users', select: '-password' },
+    { path: 'groupAdmin', select: '-password' },
+  ]);
 
   if (removed) {
     res.json(removed);

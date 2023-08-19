@@ -1,19 +1,19 @@
-import React from 'react';
-import { Skeleton, Stack } from '@chakra-ui/react';
+import { Stack } from '@chakra-ui/layout';
+import { Skeleton } from '@chakra-ui/skeleton';
 
 const ChatLoading = () => {
   return (
-    <div>
-      <Stack>
-        <Skeleton startColor='blue.500' endColor='red.500' height='45px' />
-        <Skeleton startColor='blue.500' endColor='red.500' height='45px' />
-        <Skeleton startColor='blue.500' endColor='red.500' height='45px' />
-        <Skeleton startColor='blue.500' endColor='red.500' height='45px' />
-        <Skeleton startColor='blue.500' endColor='red.500' height='45px' />
-        <Skeleton startColor='blue.500' endColor='red.500' height='45px' />
-        <Skeleton startColor='blue.500' endColor='red.500' height='45px' />
-      </Stack>
-    </div>
+    <Stack>
+      <Skeleton startColor='blue.500' endColor='red.500' height='45px' />
+      <Skeleton startColor='blue.500' endColor='red.500' height='45px' />
+      <Skeleton startColor='blue.500' endColor='red.500' height='45px' />
+      <Skeleton startColor='blue.500' endColor='red.500' height='45px' />
+      <Skeleton startColor='blue.500' endColor='red.500' height='45px' />
+      <Skeleton startColor='blue.500' endColor='red.500' height='45px' />
+      <Skeleton startColor='blue.500' endColor='red.500' height='45px' />
+      <Skeleton startColor='blue.500' endColor='red.500' height='45px' />
+      <Skeleton startColor='blue.500' endColor='red.500' height='45px' />
+    </Stack>
   );
 };
 

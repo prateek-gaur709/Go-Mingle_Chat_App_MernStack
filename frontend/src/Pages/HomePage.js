@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import {
   Container,
   Box,
@@ -12,21 +12,21 @@ import {
 
 import Login from '../components/Authentication/Login';
 import Signup from '../components/Authentication/Signup';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 const HomePage = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem('userInfo'));
 
-    if (userInfo) history.push('/chats');
-  }, [history]);
+    if (userInfo) navigate('/chats');
+  }, [navigate]);
 
   return (
     <Container maxW='xl' bg='rgba(47,167,202,255)' centerContent>
       <Box
-        d='flex'
+        display='flex'
         justifyContent='center'
         p={3}
         bg='white'

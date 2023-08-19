@@ -29,7 +29,7 @@ const ProfileModal = ({ user, children }) => {
   const [overlay, setOverlay] = React.useState(<OverlayOne />);
 
   return (
-    <div>
+    <>
       {children ? (
         <span onClick={onOpen}>{children}</span>
       ) : (
@@ -83,7 +83,7 @@ const ProfileModal = ({ user, children }) => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </div>
+    </>
   );
 };
 

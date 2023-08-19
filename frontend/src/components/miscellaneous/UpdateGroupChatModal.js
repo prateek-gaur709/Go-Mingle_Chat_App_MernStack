@@ -1,12 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
   Box,
   Button,
-  CloseButton,
   FormControl,
   IconButton,
   Input,
@@ -86,8 +81,8 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
         position: 'top-left',
       });
       setLoading(false);
-      return;
     }
+    setGroupChatName('');
   };
 
   const handleRename = async () => {
@@ -124,34 +119,34 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
         position: 'top-left',
       });
       setRenameLoading(false);
-      setGroupChatName('');
     }
+    setGroupChatName('');
   };
 
   const handleAddUser = async (user1) => {
     if (selectedChat.users.find((u) => u._id === user1._id)) {
-      // toast({
-      //   title: 'User Already present!!',
-      //   status: 'Error',
-      //   duration: 5000,
-      //   isClosable: true,
-      //   position: 'top-left',
-      // });
+      toast({
+        title: 'User Already present!!',
+        status: 'Error',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom',
+      });
 
-      window.alert('User Already present!!');
+      // window.alert('User Already present!!');
       return;
     }
 
     if (selectedChat.groupAdmin._id !== user._id) {
-      // toast({
-      //   title: 'Only Admin can add Users!!',
-      //   status: 'Error',
-      //   duration: 5000,
-      //   isClosable: true,
-      //   position: 'top-left',
-      // });
+      toast({
+        title: 'Only Admin can add Users!!',
+        status: 'Error',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom',
+      });
 
-      window.alert('Only Admin can add Users!!');
+      // window.alert('Only Admin can add Users!!');
       return;
     }
 
@@ -182,10 +177,11 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
         description: error.response.data.message,
         duration: 5000,
         isClosable: true,
-        position: 'top-left',
+        position: 'bottom',
       });
       setLoading(false);
     }
+    setGroupChatName('');
   };
 
   const handleSearch = async (query) => {
@@ -211,9 +207,9 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
         status: 'Error',
         duration: 5000,
         isClosable: true,
-        position: 'top-left',
+        position: 'bottom',
       });
-      return;
+      setLoading(false);
     }
   };
 
@@ -247,6 +243,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
                 <UserBadgeItem
                   key={idx}
                   user={u}
+                  admin={selectedChat.groupAdmin}
                   handleFunction={() => handleRemove(u)}
                 />
               ))}

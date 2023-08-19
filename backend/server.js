@@ -12,7 +12,6 @@ const app = express();
 app.use(cors());
 
 dotenv.config();
-const PORT = process.env.PORT || 5000;
 
 //to accept json data from frontend to backend
 app.use(express.json());
@@ -20,9 +19,9 @@ app.use(express.json());
 //database connection
 connectDB();
 
-app.get('/', (req, res) => {
-  res.send(`App is running on port ${PORT}`);
-});
+// app.get('/', (req, res) => {
+//   res.send(`App is running on port ${PORT}`);
+// });
 
 //get post methods in userroute folder, then use-- app.use()
 app.use('/api/user', userRoutes);
@@ -34,15 +33,56 @@ app.use('/api/message', messageRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-// app.get('/api/chat', (req, res) => {
-//   res.send(chats);
-// });
+const PORT = process.env.PORT || 5000;
 
-// app.get('/api/chat/:id', (req, res) => {
-// console.log(req.params.id);
-//   res.send(chats.find((ele) => ele._id === req.params.id));
-// });
+const server = app.listen(
+  PORT,
+  console.log(`Server has started on PORT ${PORT}`.white.bold)
+);
 
-app.listen(PORT, 'localhost', () => {
-  console.log(`Server has started on PORT ${PORT}`.white.bold);
+const io = require('socket.io')(server, {
+  pingTimeout: 60000,
+  cors: {
+    origin: 'http://localhost:3000',
+  },
 });
+
+io.on('connection', (socket) => {
+  console.log(`connected to socket.io `);
+
+  //create logged in user room
+
+  socket.on('setup', (userData) => {
+    socket.join(userData._id);
+    console.log(userData._id, userData.name);
+    socket.emit('connected');
+  });
+
+  socket.on('join chat', (room) => {
+    socket.join(room);
+    console.log(`User joined the room: `.bgBlue + room);
+  });
+
+  socket.on('typing', (room) => socket.in(room).emit('typing'));
+  socket.on('stop typing', (room) => socket.in(room).emit('stop typing'));
+
+  socket.on('new message', (newMessageReceived) => {
+    var chat = newMessageReceived.chat;
+
+    if (!chat.users) return console.log('chat.users not defined');
+
+    chat.users.forEach((user) => {
+      if (user._id == newMessageReceived.sender._id) return;
+
+      socket.in(user._id).emit('message received', newMessageReceived);
+    });
+  });
+
+  socket.off('setup', () => {
+    console.log('USER DISCONNECTED!');
+    socket.leave(userData._id);
+  });
+});
+
+// console.log('khud ko msg nhi gya hai..other person in room ko gya h..');
+//"in" means inside that users room, emit/send the message

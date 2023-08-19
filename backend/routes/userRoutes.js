@@ -20,4 +20,9 @@ router.post('/login', authUser);
 //search user api
 // router.route('/').get(allUsers); //better to chain it above, bcoz of same endpoint
 
+// //or
+// router.route('/').get(protect, allUsers);
+// router.route('/').post(registerUser);
+// router.post('/login', authUser);
+
 module.exports = router;

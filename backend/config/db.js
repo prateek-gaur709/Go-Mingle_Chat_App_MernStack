@@ -5,6 +5,7 @@ mongoose.set('strictQuery', false);
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
+      dbName: 'talk-A-Little',
       useNewURLParser: true,
       useUnifiedTopology: true,
     });

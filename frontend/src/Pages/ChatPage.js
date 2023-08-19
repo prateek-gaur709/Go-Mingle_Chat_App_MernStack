@@ -1,4 +1,3 @@
-import React from 'react';
 import { useState } from 'react';
 import { ChatState } from '../Context/ChatProvider';
 import { Box } from '@chakra-ui/react';
