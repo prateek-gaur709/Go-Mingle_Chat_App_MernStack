@@ -277,7 +277,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         >
           <Text
             justifyContent='center'
-            mt={250}
+            mt={0}
             fontSize='3xl'
             pb={3}
             fontFamily='Work sans'

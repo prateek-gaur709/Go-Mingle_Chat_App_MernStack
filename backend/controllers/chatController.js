@@ -20,12 +20,14 @@ const accessChat = asyncHandler(async (req, res) => {
     return res.sendStatus(400);
   }
 
+  //u can use this also in place of $all
+  // $and: [
+  //   { users: { $eleMatch: { $eq: req.user._id } } },
+  //   { users: { $eleMatch: { $eq: userId } } },
+  // ],
+
   var isChat = await Chat.find({
     isGroupChat: false,
-    // $and: [
-    //   { users: { $eleMatch: { $eq: req.user._id } } },
-    //   { users: { $eleMatch: { $eq: userId } } },
-    // ],
     users: { $all: [req.user._id, userId] },
   }).populate([{ path: 'users', select: '-password' }, 'latestMessage']);
 
@@ -60,6 +62,9 @@ const accessChat = asyncHandler(async (req, res) => {
   }
 });
 
+//@description     Fetch all chats for a user
+//@route           GET /api/chat/
+//@access          Protected
 const fetchChats = asyncHandler(async (req, res) => {
   //check which user is logged in , and query the chats for that user in the db
   //then populate the things returned from it.
@@ -87,37 +92,40 @@ const fetchChats = asyncHandler(async (req, res) => {
 });
 
 const createGroupChat = asyncHandler(async (req, res) => {
-  // console.log(req.body);
-  if (!req.body.users || !req.body.chatName) {
-    return res.status(400).send({ message: 'Pls fill all the fields! ' });
+  if (!req.body.users || !req.body.name) {
+    return res.status(400).send({ message: 'Please Fill all the feilds' });
   }
 
   var users = JSON.parse(req.body.users);
 
   if (users.length < 2) {
-    res.status(400).send('More than 2 users are required to form a group chat');
+    return res
+      .status(400)
+      .send('More than 2 users are required to form a group chat');
   }
 
-  //group should also contain current user
   users.push(req.user);
 
-  //users array has been created.Now creating a new request or query to the database.
   try {
     const groupChat = await Chat.create({
-      chatName: req.body.chatName,
+      chatName: req.body.name,
       isGroupChat: true,
       users: users,
       groupAdmin: req.user,
     });
 
-    //created group chat, fetch chat to user
-    const fullGroupChat = await Chat.findOne({ _id: groupChat._id }).populate([
-      { path: 'users', select: '-password' },
-      { path: 'groupAdmin', select: '-password' },
-    ]);
+    console.log(users.length);
+
+    const fullGroupChat = await Chat.findOne({ _id: groupChat._id })
+      .populate('users', '-password')
+      .populate('groupAdmin', '-password');
+
+    console.log(users.length);
 
     res.status(200).json(fullGroupChat);
+    console.log(users.length);
   } catch (error) {
+    console.log('mera');
     res.status(400);
     throw new Error(error.message);
   }

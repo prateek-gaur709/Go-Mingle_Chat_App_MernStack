@@ -83,51 +83,47 @@ const GroupChatModal = ({ children }) => {
   const handleSubmit = async () => {
     if (!groupChatName || !selectedUsers) {
       toast({
-        title: 'Pls enter all the fields !',
+        title: 'Please fill all the feilds',
         status: 'warning',
         duration: 5000,
-        position: 'bottom',
         isClosable: true,
+        position: 'top',
       });
       return;
     }
-    //post request so json format me bhejna pdega
+
     try {
-      setLoading(true);
       const config = {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
       };
-
       const { data } = await axios.post(
-        '/api/chat/group',
+        `/api/chat/group`,
         {
-          chatName: groupChatName,
+          name: groupChatName,
           users: JSON.stringify(selectedUsers.map((u) => u._id)),
         },
         config
       );
-
-      setChats([data, ...chats]); // data pehle islie ki vo top pr aaye chats me..
-      onClose(); //close the modal
+      setChats([data, ...chats]);
+      onClose();
       toast({
-        title: 'New Group Chat Created!!',
+        title: 'New Group Chat Created!',
         status: 'success',
         duration: 5000,
-        position: 'bottom-center',
         isClosable: true,
+        position: 'bottom',
       });
     } catch (error) {
       toast({
-        title: 'Failed to create Group Chat!',
+        title: 'Failed to Create the Chat!',
+        description: error.response.data,
         status: 'error',
-        description: 'Failed to create Group Chat !! ',
         duration: 5000,
-        position: 'bottom-center',
         isClosable: true,
+        position: 'bottom',
       });
-      return;
     }
   };
 

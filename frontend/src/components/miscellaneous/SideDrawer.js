@@ -129,7 +129,7 @@ const SideDrawer = () => {
         status: 'Error',
         duration: 5000,
         isClosable: true,
-        position: 'top-left',
+        position: 'bottom-left',
       });
       return;
     }
@@ -204,7 +204,7 @@ const SideDrawer = () => {
       </Drawer>
 
       <Text fontSize='2xl' fontFamily='Work sans'>
-        Talk-A-Little
+        🪶🪶 Go-Mingle 🪶🪶
       </Text>
 
       <div>

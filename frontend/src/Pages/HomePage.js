@@ -41,7 +41,7 @@ const HomePage = () => {
           color='black'
           fontWeight='bold'
         >
-          Talk-a-Little
+          🪶🪶 Go-Mingle 🪶🪶
         </Text>
       </Box>
 
