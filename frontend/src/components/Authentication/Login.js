@@ -9,30 +9,27 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
-
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ChatState } from '../../Context/ChatProvider';
 
 const Login = () => {
-  const [show, setShow] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [loading1, setLoading1] = useState(false);
 
   const navigate = useNavigate();
   const { setUser } = ChatState();
   const toast = useToast();
 
-  const handleClick = () => setShow(!show);
+  const toggleShowPassword = () => setShowPassword(!showPassword);
 
   const handleLogin = async () => {
     setLoading(true);
     if (!email || !password) {
-      setLoading(false);
       toast({
-        title: 'Pls enter all the * marked fields!',
+        title: 'Please enter all the required fields!',
         status: 'warning',
         duration: 5000,
         isClosable: true,
@@ -42,7 +39,6 @@ const Login = () => {
       return;
     }
 
-    //else match the data from mongodb database and auth login
     try {
       const config = {
         headers: {
@@ -57,25 +53,26 @@ const Login = () => {
       );
 
       toast({
-        title: 'Login Successful !!',
+        title: 'Login Successful!',
         status: 'success',
         duration: 5000,
         isClosable: true,
         position: 'bottom',
       });
+
       setUser(data);
       localStorage.setItem('userInfo', JSON.stringify(data));
-      setLoading(false);
       navigate('/chats');
     } catch (error) {
       toast({
-        title: 'Error Occurred!!',
+        title: 'Error Occurred!',
         description: error.response.data.message,
         status: 'error',
         duration: 5000,
         isClosable: true,
         position: 'bottom',
       });
+    } finally {
       setLoading(false);
     }
   };
@@ -96,13 +93,15 @@ const Login = () => {
         <FormLabel>Password</FormLabel>
         <InputGroup>
           <Input
-            type={show ? 'text' : 'password'}
+            type={showPassword ? 'text' : 'password'}
             value={password}
             placeholder='Enter password'
             onChange={(e) => setPassword(e.target.value)}
           />
           <InputRightElement>
-            <Button onClick={handleClick}>{show ? 'Hide' : 'Show'}</Button>
+            <Button onClick={toggleShowPassword}>
+              {showPassword ? 'Hide' : 'Show'}
+            </Button>
           </InputRightElement>
         </InputGroup>
       </FormControl>
@@ -121,12 +120,10 @@ const Login = () => {
         width='100%'
         color='white'
         colorScheme='red'
-        isLoading={loading1}
+        isLoading={loading}
         onClick={() => {
-          setLoading1(true);
           setEmail('guest@example.com');
           setPassword('123456');
-          setLoading1(false);
         }}
       >
         Get Guest User Credentials

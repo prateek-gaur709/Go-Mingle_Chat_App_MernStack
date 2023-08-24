@@ -5,7 +5,7 @@ mongoose.set('strictQuery', false);
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
-      dbName: 'talk-A-Little',
+      dbName: 'Go-Mingle_chatApp',
       useNewURLParser: true,
       useUnifiedTopology: true,
     });
