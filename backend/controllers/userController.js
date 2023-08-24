@@ -1,7 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const { generateToken } = require('../config/generateToken');
 //express-async-handler package handles the errors in this controller
-const User = require('../models/userModel');
+const User = require('../Models/userModel');
 
 //@description     Get or Search all users
 //@route           GET /api/user?search=
